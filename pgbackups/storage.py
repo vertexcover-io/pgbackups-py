@@ -21,8 +21,9 @@ class AWSStorage(BackupStorage):
         try:
             aws_access_key_id = os.environ['PGBACKUPS_AWS_ACCESS_KEY_ID']
             aws_secret_access_key = os.environ['PGBACKUPS_AWS_SECRET_ACCESS_KEY']
+            self.bucket = os.environ['PGBACKUPS_AWS_BUCKET']
         except KeyError:
-                raise Exception('''AWS Credentials must be set in
+                raise Exception('''AWS Credentials/ Bucket must be set in
                                 environment variables''')
 
         self.s3 = boto3.client('s3',
@@ -31,4 +32,10 @@ class AWSStorage(BackupStorage):
 
     def store(self, backup_file, filename):
         storage_options = os.environ.get('PGBACKUPS_STORAGE_OPTIONS', None) or {}
-        self.s3.put_object(key=filename, Body=backup_file, **storage_options)
+        self.s3.put_object(Bucket=self.bucket,
+                           Key=filename, Body=backup_file, **storage_options)
+
+
+def get_storage():
+    return AWSStorage()
+
