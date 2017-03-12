@@ -7,12 +7,12 @@ that helps in automating Heroku PGBackups and archiving them to Amazon S3.
 
 # Overview
 
-This package provides a python script `pgbackup` that will capture a Heroku 
+This package provides a python script `pgbackups` that will capture a Heroku 
 PGBackup, wait for it to complete, and then store it within the Amazon S3 bucket
 you specify. Best way to use this package is to use heroku scheduler to schedule 
 this python script at any required durations and get automated offsite backups.
 This project though can also be used as a library and can be used within
-your own code. The `pgbackup` script can also be run 
+your own code. The `pgbackups` script can also be run 
 from command line to generate adhoc backups
 
 
@@ -39,7 +39,7 @@ Pro Tip on Assigning an AWS IAM user access to a single S3 bucket.
 #### Configure Backups
 
 The backups can either be configured by setting environment variables or by 
-passing arguments to the provided `pgbackup` script. On heroku environemnt 
+passing arguments to the provided `pgbackups` script. On heroku environemnt 
 variables can be set as below  
 
     # Required
@@ -54,7 +54,7 @@ variables can be set as below
     # database (useful for follower databases).
     heroku config:add PGBACKUPS_DATABASE="HEROKU_POSTGRESQL_BLACK_URL"
     
-The `pgbackup` script takes following options
+The `pgbackups` script takes following options
 
       -h, --help            show this help message and exit
       --app APP             Heroku App for which backup needs to be performed
@@ -78,7 +78,7 @@ The `pgbackup` script takes following options
 
     heroku addons:open scheduler
 
-Then specify `pgbackup` as a command you would like to run at any of the available intervals.
+Then specify `pgbackups` as a command you would like to run at any of the available intervals.
 
 
 ## License
