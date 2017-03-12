@@ -1,5 +1,7 @@
 # pybackups-py
 
+[<img src="https://img.shields.io/pypi/v/pgbackups-py.svg">](https://pypi.python.org/pypi/pgbackups-py)
+
 A python port of [pgbackups-archive](https://github.com/kjohnston/pgbackups-archive)
 that helps in automating Heroku PGBackups and archiving them to Amazon S3.
 
