@@ -9,6 +9,8 @@ from abc import ABCMeta, abstractmethod
 import boto3
 import six
 
+env_get = os.environ.get
+
 
 class BackupStorage(six.with_metaclass(ABCMeta)):
     @abstractmethod
@@ -17,25 +19,29 @@ class BackupStorage(six.with_metaclass(ABCMeta)):
 
 
 class AWSStorage(BackupStorage):
-    def __init__(self):
-        try:
-            aws_access_key_id = os.environ['PGBACKUPS_AWS_ACCESS_KEY_ID']
-            aws_secret_access_key = os.environ['PGBACKUPS_AWS_SECRET_ACCESS_KEY']
-            self.bucket = os.environ['PGBACKUPS_AWS_BUCKET']
-        except KeyError:
-                raise Exception('''AWS Credentials/ Bucket must be set in
-                                environment variables''')
+    def __init__(self, aws_access_key=None,
+                 aws_secret_key=None, aws_bucket=None, **aws_storage_options):
+
+        aws_access_key = aws_access_key or env_get(
+            'PGBACKUPS_AWS_ACCESS_KEY_ID')
+        aws_secret_key = aws_secret_key or env_get(
+            'PGBACKUPS_AWS_SECRET_ACCESS_KEY')
+        self.bucket = aws_bucket or env_get('PGBACKUPS_AWS_BUCKET')
+
+        self.storage_options = aws_storage_options or env_get('PGBACKUPS_STORAGE_OPTIONS', {})
+
+        if None in (aws_access_key, aws_secret_key, self.bucket):
+                raise Exception('''AWS Credentials/ Bucket must be provided''')
 
         self.s3 = boto3.client('s3',
-                               aws_access_key_id=aws_access_key_id,
-                               aws_secret_access_key=aws_secret_access_key)
+                               aws_access_key_id=aws_access_key,
+                               aws_secret_access_key=aws_secret_key)
 
     def store(self, backup_file, filename):
-        storage_options = os.environ.get('PGBACKUPS_STORAGE_OPTIONS', None) or {}
         self.s3.put_object(Bucket=self.bucket,
-                           Key=filename, Body=backup_file, **storage_options)
+                           Key=filename, Body=backup_file, **self.storage_options)
 
 
-def get_storage():
-    return AWSStorage()
+def get_storage(**kwargs):
+    return AWSStorage(**kwargs)
 
