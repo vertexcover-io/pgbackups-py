@@ -1,4 +1,5 @@
 boto3==1.4.1
+bumpversion==0.5.3
 heroku==0.2.0
 ipython==5.1.0
 pandoc==1.0.0b2
